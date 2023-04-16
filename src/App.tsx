@@ -57,7 +57,6 @@ const App = () => {
 
   const onChange = (checked: boolean) => {
     setLoading(!checked);
-    checked && handleStop(nowPlaying)
   };
 
   const handlePlay = (index: number) => {
