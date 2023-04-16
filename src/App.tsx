@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, Switch, Row, Col, Button, Progress, Avatar, Space } from 'antd';
 import sound1 from './staticData/sound1.mp3'
 import sound2 from './staticData/sound2.mp3'
@@ -32,6 +32,7 @@ const soundArr = [
     name: "Alec Benjamin - Let Me Down Slowly",
     duration: 177
   },
+
 ]
 
 
@@ -45,7 +46,7 @@ const App = () => {
   const [playAudio4, { stop: stopAudio4, duration: duration4 }] = useSound(sound4);
   const [intervalValue, setIntervalValue] = useState<number>(1000)
 
-  const [count, { startCountdown, resetCountdown }] =
+  const [count, { startCountdown, resetCountdown, stopCountdown }] =
     useCountdown({
       countStart: soundArr[nowPlaying].duration,
       intervalMs: intervalValue,
@@ -53,10 +54,11 @@ const App = () => {
 
   const onChange = (checked: boolean) => {
     setLoading(!checked);
+    checked && handleStop(nowPlaying)
   };
 
   const handlePlay = (index: number) => {
-    startCountdown()
+
     switch (index) {
       case (0): playAudio1(); break;
       case (1): playAudio2(); break;
@@ -64,10 +66,15 @@ const App = () => {
       case (3): playAudio4(); break;
       default: console.log("test"); break;
     }
+    stopCountdown()
+    startCountdown()
+    stopCountdown()
+    startCountdown()
+
+    setLoading(true)
   };
 
   const handleStop = (index: number) => {
-    resetCountdown()
     switch (index) {
       case (0): stopAudio1(); break;
       case (1): stopAudio2(); break;
@@ -75,20 +82,28 @@ const App = () => {
       case (3): stopAudio4(); break;
       default: console.log("test"); break;
     }
+    resetCountdown()
+
   }
 
   const handlePlayer = (sound: any, index: number) => {
-    handleStop(nowPlaying)
+
     setNowPlaying(index)
-    handlePlay(index)
+
+    handleStop(nowPlaying)
     showNotification("success", "Playing", sound.name, null, null)
+    handlePlay(index)
   }
 
   const magic = () => {
-    const duration = soundArr[nowPlaying].duration
-    const num = (duration - count) * 100 / duration
-    return parseFloat(num.toFixed(2))
+    const duration = soundArr[nowPlaying].duration;
+    const counter = (duration - count) * 100 / duration
+    return parseFloat((counter.toFixed(2)))
   }
+
+  useEffect(() => {
+    console.log(nowPlaying)
+  }, [nowPlaying])
 
   return (<Row style={{ marginTop: 100 }}>
     <Col xs={{ span: 21, offset: 1 }} sm={{ span: 12, offset: 6 }}>
