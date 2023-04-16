@@ -11,6 +11,8 @@ import { showNotification } from './components/general/notification';
 import { FcMusic } from "react-icons/fc";
 import Meta from 'antd/es/card/Meta';
 import { useCountdown } from 'usehooks-ts'
+
+
 const soundArr = [
   {
     sound: sound1,
@@ -38,18 +40,19 @@ const soundArr = [
 
 
 const App = () => {
+  // bu hooku dokuyan çocuk kör oldu
+
   const [loading, setLoading] = useState(false);
   const [nowPlaying, setNowPlaying] = useState(0)
   const [playAudio1, { stop: stopAudio1, duration: duration1 }] = useSound(sound1);
   const [playAudio2, { stop: stopAudio2, duration: duration2 }] = useSound(sound2);
   const [playAudio3, { stop: stopAudio3, duration: duration3 }] = useSound(sound3);
   const [playAudio4, { stop: stopAudio4, duration: duration4 }] = useSound(sound4);
-  const [intervalValue, setIntervalValue] = useState<number>(1000)
 
-  const [count, { startCountdown, resetCountdown, stopCountdown }] =
+  const [count, { startCountdown, resetCountdown }] =
     useCountdown({
-      countStart: soundArr[nowPlaying].duration,
-      intervalMs: intervalValue,
+      countStart: 100,
+      intervalMs: soundArr[nowPlaying].duration / 100 * 1000,
     })
 
   const onChange = (checked: boolean) => {
@@ -66,12 +69,7 @@ const App = () => {
       case (3): playAudio4(); break;
       default: console.log("test"); break;
     }
-    stopCountdown()
     startCountdown()
-    stopCountdown()
-    startCountdown()
-
-    setLoading(true)
   };
 
   const handleStop = (index: number) => {
@@ -96,14 +94,8 @@ const App = () => {
   }
 
   const magic = () => {
-    const duration = soundArr[nowPlaying].duration;
-    const counter = (duration - count) * 100 / duration
-    return parseFloat((counter.toFixed(2)))
+    return 100 - count
   }
-
-  useEffect(() => {
-    console.log(nowPlaying)
-  }, [nowPlaying])
 
   return (<Row style={{ marginTop: 100 }}>
     <Col xs={{ span: 21, offset: 1 }} sm={{ span: 12, offset: 6 }}>
